@@ -98,7 +98,7 @@ class NationalIdTest {
     }
 
     @Test
-    fun `isValid returns false for wrong length (13 or 15 digits)`() {
+    fun `isValid returns false for wrong length 13 or 15 digits`() {
         val first13 = VALID_ID_1990_MALE_CAIRO.substring(0, 13)
         val with15 = VALID_ID_1990_MALE_CAIRO + "0"
         assertFalse(NationalIdValidator.isValid(first13))
@@ -124,7 +124,7 @@ class NationalIdTest {
     }
 
     @Test
-    fun `isValid returns false for impossible calendar date (Feb 30)`() {
+    fun `isValid returns false for impossible calendar date Feb 30`() {
         // February 30 does not exist in any year
         assertFalse(NationalIdValidator.isValid("29002300100017"))
     }

@@ -1,10 +1,14 @@
-plugins {
-    kotlin("multiplatform") version "2.3.10"
-    `maven-publish`
-    signing
-}
+import org.jreleaser.model.Active
 
-// الـ Group ID يطابق الـ Namespace اللي في الـ Portal بالظبط بالشرطة
+        plugins {
+            kotlin("multiplatform") version "2.3.10"
+            id("org.jreleaser") version "1.20.0"
+            id("org.jetbrains.dokka") version "2.0.0"
+
+            `maven-publish`
+            signing
+        }
+
 group = "io.github.hmh-3080"
 version = "1.0.0"
 
@@ -19,13 +23,14 @@ kotlin {
         browser()
         nodejs()
     }
-    withSourcesJar()
 
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
     jvmToolchain(11)
+
+    withSourcesJar()
 
     sourceSets {
         val commonMain by getting {
@@ -43,7 +48,7 @@ kotlin {
 }
 
 publishing {
-    publications.withType<MavenPublication> {
+    publications.withType<MavenPublication>().configureEach {
         pom {
             name.set("Egyptian National ID Checker")
             description.set("A multiplatform Kotlin library to validate and parse Egyptian National IDs.")
@@ -52,7 +57,7 @@ publishing {
             licenses {
                 license {
                     name.set("The Apache License, Version 2.0")
-                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                 }
             }
 
@@ -74,6 +79,30 @@ publishing {
 }
 
 signing {
-    useGpgCmd()
     sign(publishing.publications)
+}
+
+jreleaser {
+    signing {
+        active.set(Active.ALWAYS)
+        armored.set(true)
+    }
+
+    release {
+        github {
+            enabled.set(false)
+        }
+    }
+
+    deploy {
+        maven {
+            mavenCentral {
+                create("central") {
+                    active.set(Active.ALWAYS)
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    stagingRepository("build/staging-deploy")
+                }
+            }
+        }
+    }
 }
